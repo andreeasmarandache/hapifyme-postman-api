@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "56cdde88-141d-4d17-8ff1-417ceefde90e",
+		"name": "Tema 18 - AndreeaSmarandache",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21169484"
+	},
+	"item": [
+		{
+			"name": "User registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"if (response.username) {\r",
+							"    pm.environment.set(\"username\", response.username);\r",
+							"}\r",
+							"\r",
+							"if (response.user_id) {\r",
+							"    pm.environment.set(\"user_id\", response.user_id);\r",
+							"}\r",
+							"\r",
+							"if (response.confirmation_token) {\r",
+							"    pm.environment.set(\"confirmation_token\", response.confirmation_token);\r",
+							"}\r",
+							"\r",
+							"if (response.api_key) {\r",
+							"    pm.environment.set(\"api_key\", response.api_key);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let timestamp = new Date().getTime();\r",
+							"\r",
+							"pm.environment.set(\"email\", `andreea.${timestamp}@test.com`);\r",
+							"\r",
+							"console.log(\"Email generat: \", pm.environment.get(\"email\"));\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Andreea\",\n    \"last_name\": \"Smarandache\",\n    \"email\": \"{{email}}\",\n    \"password\": \"QualityQA4!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/register.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"register.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status este 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if (response.token) {\r",
+							"    pm.environment.set(\"token\", response.token);\r",
+							"}\r",
+							"\r",
+							"if (response.user_id) {\r",
+							"    pm.environment.set(\"user_id\", response.user_id);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/login.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"login.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Email-ul din profil este corect\", function () {\r",
+							"    pm.expect(response.user.email).to.eql(pm.environment.get(\"email\"));\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let userId = pm.environment.get(\"user_id\");\r",
+							"\r",
+							"pm.request.url.query.add({ key: \"user_id\", value: userId });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/get_profile.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"get_profile.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User Profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status este 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/user/delete_profile.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"delete_profile.php"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
